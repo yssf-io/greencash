@@ -16,11 +16,20 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
   [publicProvider()]
 );
 
+const { connectors } = getDefaultWallets({
+  appName: 'Green Cash',
+  projectId: 'YOUR_PROJECT_ID',
+  chains
+});
+
+
 const config = createConfig({
   autoConnect: true,
+  connectors,
   publicClient,
   webSocketPublicClient,
 });
+
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
