@@ -2,6 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {ERC20} from "openzeppelin/token/ERC20/ERC20.sol";
+import {ECDSA} from "openzeppelin/utils/cryptography/ECDSA.sol";
 import {AavePoolProvider} from "./interfaces/AavePoolProvider.sol";
 import {AavePool} from "./interfaces/AavePool.sol";
 import {OffsetHelper} from "./interfaces/OffsetHelper.sol";
@@ -15,6 +16,11 @@ contract GreenWrapper is ERC20 {
     AavePoolProvider public immutable aavePoolProvider;
     OffsetHelper public immutable toucan;
     address public carbonToken;
+    mapping(address => uint256) public counters;
+
+    error ZeroValue();
+    error AlreadyProcessed();
+    error WrongSigner();
 
     constructor(
         string memory _name,
@@ -90,5 +96,36 @@ contract GreenWrapper is ERC20 {
 
         // Buy carbon credits
         toucan.autoOffsetExactInToken(address(underlying), yield, carbonToken);
+    }
+
+    function transferWithSignature(
+        uint256 id,
+        address from,
+        address recipient,
+        address token,
+        uint256 amount,
+        bytes calldata signature
+    ) external {
+        if (recipient == address(0) || amount == 0) {
+            revert ZeroValue();
+        }
+
+        if (id != counters[from]) {
+            revert AlreadyProcessed();
+        }
+
+        bytes32 messageHash = keccak256(
+            abi.encodePacked(id, from, recipient, token, amount)
+        );
+        bytes32 signedMessage = ECDSA.toEthSignedMessageHash(messageHash);
+        address signer = ECDSA.recover(signedMessage, signature);
+
+        if (signer != from) {
+            revert WrongSigner();
+        }
+
+        counters[from] = counters[from] + 1;
+
+        ERC20(token).transfer(recipient, amount);
     }
 }
