@@ -86,6 +86,12 @@ function App() {
     functionName: "transfer",
   });
 
+  const { write: retire } = useContractWrite({
+    address: contractAddress,
+    abi: GreenWrapperAbi.abi,
+    functionName: "buyCarbonCredits",
+  });
+
   useEffect(() => {
     // if (!balance) return;
     console.log("userAddr", userAddress);
@@ -271,12 +277,7 @@ function App() {
                   <button
                     className="btn btn-accent"
                     onClick={() => {
-                      send({
-                        args: [
-                          destAddress,
-                          parseUnits(amount as `${number}`, 6),
-                        ],
-                      });
+                      retire();
                     }}
                   >
                     Retire Carbon Credits
