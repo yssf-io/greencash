@@ -8,7 +8,7 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import { useAccount, useContractRead, useContractWrite } from "wagmi";
 import GreenWrapperAbi from "./abi/GreenWrapper.json";
-import { formatEther, formatUnits, parseUnits } from "viem";
+import { formatEther, formatUnits, parseUnits, parseEther } from "viem";
 import usdc from "./assets/usdc.png";
 import gusdc from "./assets/gusdc.png";
 
@@ -24,6 +24,7 @@ function App() {
   const [destAddress, setDestAddress] = useState<string>("");
   // const [balance, setBalance] = useState<number>(0);
   const contractAddress = "0xBd8ca04092a0c9016EDf9E65C386eCE3AfA2127B";
+  const usdcAddress = "0x69305b943C6F55743b2Ece5c0b20507300a39FC3";
 
   function handleTokenChange() {
     if (token === "USDC") {
@@ -75,6 +76,14 @@ function App() {
     watch: true,
   });
 
+  const { data: allowance } = useContractRead({
+    address: usdcAddress,
+    abi: GreenWrapperAbi.abi,
+    functionName: "allowance",
+    args: [userAddress, contractAddress],
+    watch: true,
+  });
+
   const { write: wrap } = useContractWrite({
     address: contractAddress,
     abi: GreenWrapperAbi.abi,
@@ -99,6 +108,13 @@ function App() {
     functionName: "buyCarbonCredits",
   });
 
+  const { write: approve } = useContractWrite({
+    address: usdcAddress,
+    abi: GreenWrapperAbi.abi,
+    functionName: "approve",
+    args: [contractAddress, parseEther("10000000000000")],
+  });
+
   useEffect(() => {
     // if (!balance) return;
     console.log("userAddr", userAddress);
@@ -110,6 +126,11 @@ function App() {
     console.log("userAddr", userAddress);
     console.log("gbalance", gBalance);
   }, [gBalance]);
+
+  useEffect(() => {
+    // if (!balance) return;
+    console.log("allowance", allowance);
+  }, [allowance]);
 
   return (
     <>
@@ -204,6 +225,19 @@ function App() {
                   </div>
                 </div>
                 <div className="flex flex-row justify-center items-center mt-4">
+                  {(allowance as bigint) == 0n && (
+                    <button
+                      id="wrapBtn"
+                      className="btn btn-accent"
+                      onClick={() => {
+                        approve({
+                          args: [contractAddress, parseEther("10000000000000")],
+                        });
+                      }}
+                    >
+                      Approve
+                    </button>
+                  ) || (
                   <button
                     id="wrapBtn"
                     className="btn btn-accent"
@@ -217,6 +251,7 @@ function App() {
                   >
                     Greenify
                   </button>
+                  )}
                 </div>
               </div>
             </div>
