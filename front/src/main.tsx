@@ -5,6 +5,11 @@ import "./index.css";
 import { WagmiConfig, createConfig, configureChains } from "wagmi";
 import { polygonMumbai } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
+import "@rainbow-me/rainbowkit/styles.css";
+import {
+  getDefaultWallets,
+  RainbowKitProvider,
+} from '@rainbow-me/rainbowkit';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [polygonMumbai],
@@ -20,7 +25,9 @@ const config = createConfig({
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <WagmiConfig config={config}>
-      <App />
+      <RainbowKitProvider chains={chains}>
+        <App />
+      </RainbowKitProvider>
     </WagmiConfig>
   </React.StrictMode>
 );
