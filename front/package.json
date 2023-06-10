@@ -13,6 +13,8 @@
     "@rainbow-me/rainbowkit": "^1.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.9.0",
+    "react-tabs": "^6.0.1",
     "viem": "^1.0.2",
     "wagmi": "^1.1.1"
   },
