@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
+
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { BsArrowDownUp } from "react-icons/bs";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
@@ -8,6 +9,8 @@ import "react-tabs/style/react-tabs.css";
 import { useAccount, useContractRead, useContractWrite } from "wagmi";
 import GreenWrapperAbi from "./abi/GreenWrapper.json";
 import { formatEther, formatUnits, parseUnits } from "viem";
+import usdc from "./assets/usdc.png";
+import gusdc from "./assets/gusdc.png";
 
 import "./App.css";
 
@@ -26,16 +29,20 @@ function App() {
     if (token === "USDC") {
       setToken("GUSDC");
       document.getElementById("wrapBtn")!.innerHTML = "Greenify";
+      document.getElementById("logo1")!.setAttribute("src", gusdc);
     } else {
       setToken("USDC");
       document.getElementById("wrapBtn")!.innerHTML = "UnGreenify";
+      document.getElementById("logo1")!.setAttribute("src", usdc);
     }
     if (tokenTo === "USDC") {
       setTokenTo("GUSDC");
       document.getElementById("wrapBtn")!.innerHTML = "Greenify";
+      document.getElementById("logo2")!.setAttribute("src", gusdc);
     } else {
       setTokenTo("USDC");
       document.getElementById("wrapBtn")!.innerHTML = "UnGreenify";
+      document.getElementById("logo2")!.setAttribute("src", usdc);
     }
   }
 
@@ -159,7 +166,12 @@ function App() {
                     className="flex flex-row justify-center items-center ml-4  hover:cursor-pointer hover:opacity-60 bg-vltGreen rounded-lg px-6"
                     onClick={handleTokenChange}
                   >
-                    <img src={reactLogo} className="w-8 h-8" alt="react logo" />
+                    <img
+                      id="logo1"
+                      src={usdc}
+                      className="w-8 h-8"
+                      alt="react logo"
+                    />
                     <div className="text-xl text-ltGreen ml-2">{token}</div>
                   </div>
                 </div>
@@ -182,7 +194,12 @@ function App() {
                     className="flex flex-row justify-center items-center ml-4 hover:cursor-pointer hover:opacity-60 bg-vltGreen rounded-lg px-6"
                     onClick={handleTokenChange}
                   >
-                    <img src={reactLogo} className="w-8 h-8" alt="react logo" />
+                    <img
+                      id="logo2"
+                      src={gusdc}
+                      className="w-8 h-8"
+                      alt="react logo"
+                    />
                     <div className="text-xl text-ltGreen ml-2">{tokenTo}</div>
                   </div>
                 </div>
