@@ -4,22 +4,32 @@ pragma solidity ^0.8.13;
 import {ERC20} from "openzeppelin/token/ERC20/ERC20.sol";
 import {AavePoolProvider} from "./interfaces/AavePoolProvider.sol";
 import {AavePool} from "./interfaces/AavePool.sol";
+import {OffsetHelper} from "./interfaces/OffsetHelper.sol";
 
 /// @title A Green Wrapper for ERC20 tokens
 /// @notice Use this contract to wrap ERC20 tokens whose yield is used to buy carbon credits
 contract GreenWrapper is ERC20 {
     uint256 public number;
-    ERC20 public underlying;
+    ERC20 public immutable underlying;
+    ERC20 public immutable aUnderlying;
     AavePoolProvider public immutable aavePoolProvider;
+    OffsetHelper public immutable toucan;
+    address public carbonToken;
 
     constructor(
         string memory _name,
         string memory _symbol,
         address _underlying,
-        address _aavePoolProvider
+        address _aUnderlying,
+        address _aavePoolProvider,
+        address _offsetHelper,
+        address _carbonToken
     ) ERC20(_name, _symbol) {
         underlying = ERC20(_underlying);
+        aUnderlying = ERC20(_aUnderlying);
         aavePoolProvider = AavePoolProvider(_aavePoolProvider);
+        toucan = OffsetHelper(_offsetHelper);
+        carbonToken = _carbonToken;
 
         underlying.approve(aavePoolProvider.getPool(), type(uint256).max);
     }
@@ -68,5 +78,17 @@ contract GreenWrapper is ERC20 {
         AavePool pool = AavePool(aavePoolProvider.getPool());
 
         pool.withdraw(address(underlying), amount, address(this));
+    }
+
+    /// @notice Buys carbon credits with yield from Aave
+    function buyCarbonCredits() public {
+        // Get yield from Aave
+        uint256 yield = aUnderlying.balanceOf(address(this)) - totalSupply();
+
+        // Withdraw it
+        _withdrawFromStrategy(yield);
+
+        // Buy carbon credits
+        toucan.autoOffsetExactInToken(address(underlying), yield, carbonToken);
     }
 }
