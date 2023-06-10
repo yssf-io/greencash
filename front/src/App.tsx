@@ -26,7 +26,7 @@ function App() {
 
   return (
     <>
-      <div className="flex flex-col w-full justify-center items-center">
+      <div className="flex flex-col w-full  items-center min-h-screen">
         <div className="flex flex-col w-full bg-drkGreen items-center py-2">
           <div className="flex flex-row w-8/12 justify-between">
             <div className="text-3xl text-ltGreen justify-left">green cash</div>
@@ -46,13 +46,16 @@ function App() {
                 id="amount"
                 type="number"
                 placeholder="Type here"
-                className="input input-bordered input-accent w-full max-w-xs"
+                className="input input-bordered input-accent w-10/11 max-w-xs"
                 value={amount}
                 onChange={(e) => {
                   setAmount(parseInt(e.target.value));
                 }}
               />
-              <div className="flex flex-row justify-center items-center ml-4">
+              <div
+                className="flex flex-row justify-center items-center ml-4 hover:cursor-pointer hover:opacity-60"
+                onClick={handleTokenChange}
+              >
                 <img src={reactLogo} className="w-8 h-8" alt="react logo" />
                 <div className="text-xl text-ltGreen ml-2">{token}</div>
               </div>
@@ -68,11 +71,14 @@ function App() {
                 id="toAmount"
                 type="number"
                 placeholder="Type here"
-                className="input input-bordered input-accent w-full max-w-xs"
+                className="input input-bordered input-accent w-10/11 max-w-xs"
                 value={amount}
                 onChange={(e) => setAmount(parseInt(e.target.value))}
               />
-              <div className="flex flex-row justify-center items-center ml-4">
+              <div
+                className="flex flex-row justify-center items-center ml-4 hover:cursor-pointer hover:opacity-60"
+                onClick={handleTokenChange}
+              >
                 <img src={reactLogo} className="w-8 h-8" alt="react logo" />
                 <div className="text-xl text-ltGreen ml-2">{tokenTo}</div>
               </div>
