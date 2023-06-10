@@ -1,21 +1,18 @@
 import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { BsArrowDownUp } from "react-icons/bs";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import { Tabs, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import { useAccount, useContractRead, useContractWrite } from "wagmi";
 import GreenWrapperAbi from "./abi/GreenWrapper.json";
-import { formatEther, formatUnits, parseUnits, parseEther } from "viem";
+import {  formatUnits, parseUnits, parseEther } from "viem";
 import usdc from "./assets/usdc.png";
 import gusdc from "./assets/gusdc.png";
 
 import "./App.css";
 
 function App() {
-  const { address: userAddress, isConnecting, isDisconnected } = useAccount();
+  const { address: userAddress } = useAccount();
 
   const [tabIndex, setTabIndex] = useState(0);
   const [token, setToken] = useState<string>("USDC");
