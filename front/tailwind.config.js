@@ -8,7 +8,7 @@ export default {
         ltGreen: "#0F8B8D",
         vltGreen: "#B3DFDF",
         vvltGreen: "#EEF7F7",
-        ltBrown: "#F3EEE6"
+        ltBrown: "#E5E4E2"
       },
     },
   },

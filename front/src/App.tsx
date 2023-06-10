@@ -1,36 +1,95 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { BsArrowDownUp } from "react-icons/bs";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
+import { useAccount, useContractRead, useContractWrite } from "wagmi";
+import GreenWrapperAbi from "./abi/GreenWrapper.json";
+import { formatEther, formatUnits, parseUnits } from "viem";
 
 import "./App.css";
 
 function App() {
+  const { address: userAddress, isConnecting, isDisconnected } = useAccount();
+
   const [tabIndex, setTabIndex] = useState(0);
-  const [token, setToken] = useState<string>("GHO");
-  const [amount, setAmount] = useState<number>(0);
-  const [tokenTo, setTokenTo] = useState<string>("GGHO");
-  const [balance, setBalance] = useState<number>(0);
+  const [token, setToken] = useState<string>("USDC");
+  const [amount, setAmount] = useState<string>("0");
+  const [tokenTo, setTokenTo] = useState<string>("GUSDC");
+  const [destAddress, setDestAddress] = useState<string>("");
+  // const [balance, setBalance] = useState<number>(0);
+  const contractAddress = "0xb2cE45f75bD80d776CB720ac20d8A00Eb3f9A881";
 
   function handleTokenChange() {
-    if (token === "GHO") {
-      setToken("GGHO");
+    if (token === "USDC") {
+      setToken("GUSDC");
+      document.getElementById("wrapBtn")!.innerHTML = "Greenify";
     } else {
-      setToken("GHO");
+      setToken("USDC");
+      document.getElementById("wrapBtn")!.innerHTML = "UnGreenify";
     }
-    if (tokenTo === "GHO") {
-      setTokenTo("GGHO");
+    if (tokenTo === "USDC") {
+      setTokenTo("GUSDC");
+      document.getElementById("wrapBtn")!.innerHTML = "Greenify";
     } else {
-      setTokenTo("GHO");
+      setTokenTo("USDC");
+      document.getElementById("wrapBtn")!.innerHTML = "UnGreenify";
     }
   }
 
   function handleTabChange(index: number) {
     setTabIndex(index);
   }
+
+  const { data: balance } = useContractRead({
+    address: "0x69305b943C6F55743b2Ece5c0b20507300a39FC3",
+    abi: GreenWrapperAbi.abi,
+    functionName: "balanceOf",
+    args: [userAddress || "0x72665Eec957e61DEF423E4CbAf3a49002E3dabc9"],
+    // args: ["0x72665Eec957e61DEF423E4CbAf3a49002E3dabc9"],
+    watch: true,
+  });
+
+  const { data: gBalance } = useContractRead({
+    address: contractAddress,
+    abi: GreenWrapperAbi.abi,
+    functionName: "balanceOf",
+    args: [userAddress || "0x72665Eec957e61DEF423E4CbAf3a49002E3dabc9"],
+    // args: ["0x72665Eec957e61DEF423E4CbAf3a49002E3dabc9"],
+    watch: true,
+  });
+
+  const { write: wrap } = useContractWrite({
+    address: contractAddress,
+    abi: GreenWrapperAbi.abi,
+    functionName: "deposit",
+  });
+
+  const { write: unwrap } = useContractWrite({
+    address: contractAddress,
+    abi: GreenWrapperAbi.abi,
+    functionName: "withdraw",
+  });
+
+  const { write: send } = useContractWrite({
+    address: contractAddress,
+    abi: GreenWrapperAbi.abi,
+    functionName: "transfer",
+  });
+
+  useEffect(() => {
+    // if (!balance) return;
+    console.log("userAddr", userAddress);
+    console.log("balance", balance);
+  }, [balance]);
+
+  useEffect(() => {
+    // if (!balance) return;
+    console.log("userAddr", userAddress);
+    console.log("gbalance", gBalance);
+  }, [gBalance]);
 
   return (
     <>
@@ -74,7 +133,7 @@ function App() {
                     className="input input-bordered input-accent w-10/11 max-w-xs"
                     value={amount}
                     onChange={(e) => {
-                      setAmount(parseInt(e.target.value));
+                      setAmount(e.target.value);
                     }}
                   />
                   <div
@@ -98,7 +157,7 @@ function App() {
                     placeholder="Type here"
                     className="input input-bordered input-accent w-10/11 max-w-xs"
                     value={amount}
-                    onChange={(e) => setAmount(parseInt(e.target.value))}
+                    onChange={(e) => setAmount(e.target.value)}
                   />
                   <div
                     className="flex flex-row justify-center items-center ml-4 hover:cursor-pointer hover:opacity-60 bg-vltGreen rounded-lg px-6"
@@ -109,7 +168,19 @@ function App() {
                   </div>
                 </div>
                 <div className="flex flex-row justify-center items-center mt-4">
-                  <button className="btn btn-accent">Greenify</button>
+                  <button
+                    id="wrapBtn"
+                    className="btn btn-accent"
+                    onClick={() => {
+                      token === "USDC"
+                        ? wrap({ args: [parseUnits(amount as `${number}`, 6)] })
+                        : unwrap({
+                            args: [parseUnits(amount as `${number}`, 6)],
+                          });
+                    }}
+                  >
+                    Greenify
+                  </button>
                 </div>
               </div>
             </div>
@@ -124,8 +195,10 @@ function App() {
                 {/* balance */}
                 <div className="flex flex-row justify-center items-center mb-2">
                   <div className="text-xl text-ltGreen mr-2">Balance:</div>
-                  <div className="text-xl text-ltGreen mr-2">{balance}</div>
-                  <div className="text-xl text-ltGreen mr-2">GGHO</div>
+                  <div className="text-xl text-ltGreen mr-2">
+                    {gBalance ? formatUnits(gBalance as bigint, 6) : 0}
+                  </div>
+                  <div className="text-xl text-ltGreen mr-2">GUSDC</div>
                 </div>
                 <div className="flex flex-row ">
                   <input
@@ -136,7 +209,7 @@ function App() {
                     className="input input-bordered input-accent w-10/11 max-w-xs"
                     value={amount}
                     onChange={(e) => {
-                      setAmount(parseInt(e.target.value));
+                      setAmount(e.target.value);
                     }}
                   />
                 </div>
@@ -146,10 +219,20 @@ function App() {
                     type="text"
                     placeholder="Enter destination address"
                     className="input input-bordered input-accent w-10/11 max-w-xs"
+                    onChange={(e) => {
+                      setDestAddress(e.target.value);
+                    }}
                   />
                 </div>
                 <div className="flex flex-row justify-center items-center mt-4">
-                  <button className="btn btn-accent">Send</button>
+                  <button
+                    className="btn btn-accent"
+                    onClick={() => {
+                      send({ args: [destAddress, parseUnits(amount as `${number}`, 6)] });
+                    }}
+                  >
+                    Send
+                  </button>
                 </div>
               </div>
             </div>
