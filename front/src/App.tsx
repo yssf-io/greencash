@@ -20,7 +20,7 @@ function App() {
   const [tokenTo, setTokenTo] = useState<string>("GUSDC");
   const [destAddress, setDestAddress] = useState<string>("");
   // const [balance, setBalance] = useState<number>(0);
-  const contractAddress = "0xb2cE45f75bD80d776CB720ac20d8A00Eb3f9A881";
+  const contractAddress = "0xBd8ca04092a0c9016EDf9E65C386eCE3AfA2127B";
 
   function handleTokenChange() {
     if (token === "USDC") {
@@ -58,6 +58,13 @@ function App() {
     functionName: "balanceOf",
     args: [userAddress || "0x72665Eec957e61DEF423E4CbAf3a49002E3dabc9"],
     // args: ["0x72665Eec957e61DEF423E4CbAf3a49002E3dabc9"],
+    watch: true,
+  });
+
+  const { data: excess } = useContractRead({
+    address: contractAddress,
+    abi: GreenWrapperAbi.abi,
+    functionName: "getExcess",
     watch: true,
   });
 
@@ -109,6 +116,12 @@ function App() {
                 onClick={() => handleTabChange(1)}
               >
                 Send
+              </div>
+              <div
+                className="text-xl text-ltGreen hover:cursor-pointer hover:opacity-60 mx-4"
+                onClick={() => handleTabChange(2)}
+              >
+                Retire Carbon Credits
               </div>
             </div>
             <div className="flex flex-row justify-between">
@@ -228,10 +241,45 @@ function App() {
                   <button
                     className="btn btn-accent"
                     onClick={() => {
-                      send({ args: [destAddress, parseUnits(amount as `${number}`, 6)] });
+                      send({
+                        args: [
+                          destAddress,
+                          parseUnits(amount as `${number}`, 6),
+                        ],
+                      });
                     }}
                   >
                     Send
+                  </button>
+                </div>
+              </div>
+            </div>
+          </TabPanel>
+          <TabPanel>
+            <div className="flex flex-row w-12/12 justify-center items-center mt-8 ">
+              <div className="flex flex-col border border-ltGreen p-6 rounded-lg bg-vvltGreen">
+                <div className="flex flex-row justify-center items-center mb-2">
+                  USDC Available to offset carbon
+                </div>
+                <div className="flex flex-row justify-center items-center mb-2">
+                  <div className="text-xl text-ltGreen mr-2">
+                    {excess ? formatUnits(excess as bigint, 6) : 0}
+                  </div>
+                  <div className="text-xl text-ltGreen mr-2">USDC</div>
+                </div>
+                <div className="flex flex-row justify-center items-center mt-4">
+                  <button
+                    className="btn btn-accent"
+                    onClick={() => {
+                      send({
+                        args: [
+                          destAddress,
+                          parseUnits(amount as `${number}`, 6),
+                        ],
+                      });
+                    }}
+                  >
+                    Retire Carbon Credits
                   </button>
                 </div>
               </div>
