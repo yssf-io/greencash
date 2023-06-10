@@ -26,7 +26,7 @@ function App() {
 
   return (
     <>
-      <div className="flex flex-col w-full  items-center min-h-screen">
+      <div className="flex flex-col w-full  items-center min-h-screen bg-ltBrown">
         <div className="flex flex-col w-full bg-drkGreen items-center py-2">
           <div className="flex flex-row w-8/12 justify-between">
             <div className="text-3xl text-ltGreen justify-left">green cash</div>
@@ -37,7 +37,7 @@ function App() {
         </div>
         <div className="flex flex-row w-8/12 justify-center items-center mt-8 ">
           {/* swap form */}
-          <div className="flex flex-col border border-ltGreen p-6 rounded-lg">
+          <div className="flex flex-col border border-ltGreen p-6 rounded-lg bg-vvltGreen">
             <div className="flex flex-row justify-center items-center mb-2">
               Greenify your tokens !
             </div>
@@ -45,6 +45,7 @@ function App() {
               <input
                 id="amount"
                 type="number"
+                step="any"
                 placeholder="Type here"
                 className="input input-bordered input-accent w-10/11 max-w-xs"
                 value={amount}
@@ -53,7 +54,7 @@ function App() {
                 }}
               />
               <div
-                className="flex flex-row justify-center items-center ml-4 hover:cursor-pointer hover:opacity-60"
+                className="flex flex-row justify-center items-center ml-4  hover:cursor-pointer hover:opacity-60 bg-vltGreen rounded-lg px-4"
                 onClick={handleTokenChange}
               >
                 <img src={reactLogo} className="w-8 h-8" alt="react logo" />
@@ -76,7 +77,7 @@ function App() {
                 onChange={(e) => setAmount(parseInt(e.target.value))}
               />
               <div
-                className="flex flex-row justify-center items-center ml-4 hover:cursor-pointer hover:opacity-60"
+                className="flex flex-row justify-center items-center ml-4 hover:cursor-pointer hover:opacity-60 bg-vltGreen rounded-lg px-4"
                 onClick={handleTokenChange}
               >
                 <img src={reactLogo} className="w-8 h-8" alt="react logo" />
