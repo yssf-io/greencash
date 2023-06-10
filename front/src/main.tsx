@@ -9,6 +9,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import {
   getDefaultWallets,
   RainbowKitProvider,
+  lightTheme
 } from '@rainbow-me/rainbowkit';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
@@ -34,7 +35,9 @@ const config = createConfig({
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <WagmiConfig config={config}>
-      <RainbowKitProvider chains={chains}>
+      <RainbowKitProvider chains={chains} theme={lightTheme({
+        ...lightTheme.accentColors.green,
+      })}>
         <App />
       </RainbowKitProvider>
     </WagmiConfig>

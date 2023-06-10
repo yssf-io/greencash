@@ -13,6 +13,7 @@ function App() {
   const [token, setToken] = useState<string>("GHO");
   const [amount, setAmount] = useState<number>(0);
   const [tokenTo, setTokenTo] = useState<string>("GGHO");
+  const [balance, setBalance] = useState<number>(0);
 
   function handleTokenChange() {
     if (token === "GHO") {
@@ -77,7 +78,7 @@ function App() {
                     }}
                   />
                   <div
-                    className="flex flex-row justify-center items-center ml-4  hover:cursor-pointer hover:opacity-60 bg-vltGreen rounded-lg px-4"
+                    className="flex flex-row justify-center items-center ml-4  hover:cursor-pointer hover:opacity-60 bg-vltGreen rounded-lg px-6"
                     onClick={handleTokenChange}
                   >
                     <img src={reactLogo} className="w-8 h-8" alt="react logo" />
@@ -100,7 +101,7 @@ function App() {
                     onChange={(e) => setAmount(parseInt(e.target.value))}
                   />
                   <div
-                    className="flex flex-row justify-center items-center ml-4 hover:cursor-pointer hover:opacity-60 bg-vltGreen rounded-lg px-4"
+                    className="flex flex-row justify-center items-center ml-4 hover:cursor-pointer hover:opacity-60 bg-vltGreen rounded-lg px-6"
                     onClick={handleTokenChange}
                   >
                     <img src={reactLogo} className="w-8 h-8" alt="react logo" />
@@ -114,7 +115,44 @@ function App() {
             </div>
           </TabPanel>
           <TabPanel>
-            <div className="flex flex-row w-8/12 justify-center items-center mt-8 "></div>
+            <div className="flex flex-row w-8/12 justify-center items-center mt-8 ">
+              {/* send form */}
+              <div className="flex flex-col border border-ltGreen p-6 rounded-lg bg-vvltGreen">
+                <div className="flex flex-row justify-center items-center mb-2">
+                  Send green tokens !
+                </div>
+                {/* balance */}
+                <div className="flex flex-row justify-center items-center mb-2">
+                  <div className="text-xl text-ltGreen mr-2">Balance:</div>
+                  <div className="text-xl text-ltGreen mr-2">{balance}</div>
+                  <div className="text-xl text-ltGreen mr-2">GGHO</div>
+                </div>
+                <div className="flex flex-row ">
+                  <input
+                    id="amount"
+                    type="number"
+                    step="any"
+                    placeholder="0.0"
+                    className="input input-bordered input-accent w-10/11 max-w-xs"
+                    value={amount}
+                    onChange={(e) => {
+                      setAmount(parseInt(e.target.value));
+                    }}
+                  />
+                </div>
+                <div className="flex flex-row mt-4">
+                  <input
+                    id="to"
+                    type="text"
+                    placeholder="Enter destination address"
+                    className="input input-bordered input-accent w-10/11 max-w-xs"
+                  />
+                </div>
+                <div className="flex flex-row justify-center items-center mt-4">
+                  <button className="btn btn-accent">Send</button>
+                </div>
+              </div>
+            </div>
           </TabPanel>
         </Tabs>
       </div>
