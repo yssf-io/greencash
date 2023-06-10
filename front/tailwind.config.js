@@ -6,8 +6,11 @@ export default {
       colors: {
         drkGreen: "#0F4C5C",
         ltGreen: "#0F8B8D",
+        vltGreen: "#B3DFDF",
+        vvltGreen: "#EEF7F7",
+        ltBrown: "#F3EEE6"
       },
     },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
 };
